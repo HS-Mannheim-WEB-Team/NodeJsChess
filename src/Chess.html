@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>NodeJs Chess</title>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+	<!--suppress CheckEmptyScriptTag -->
+	<chessheader/>
+
+	<script>
+        $(document).ready(function () {
+            var socket = io.connect('http://localhost:8080');
+            socket.on('connect', function () {
+                console.log("client: connected");
+            });
+        });
+	</script>
+</head>
+<body>
+
+<h1>NodeJs Chess</h1>
+
+<div id="content"></div>
+
+<p id="credits">
+	Credits: <br>
+	Jonas Höfler<br>
+	Sebastian Sydow<br>
+</p>
+
+</body>
+</html>
