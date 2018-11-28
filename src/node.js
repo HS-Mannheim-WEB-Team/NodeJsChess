@@ -4,21 +4,50 @@ var fs = require('fs');
 
 http.listen(8080);
 
+function loadLocalFile(name) {
+    return fs.readFileSync(__dirname + "/" + name);
+}
 
-//load resources
-var file_index = fs.readFileSync(__dirname + '/Chess.html').toString();
-file_index = file_index.replace(/<script include="(.+?)"><\/script>/gi, function (match, p1) {
-    return "<script>\n" + fs.readFileSync(__dirname + p1).toString() + "\n</script>";
-});
+function embedfile(file) {
+    var content = loadLocalFile(file).toString();
+    if (file.endsWith(".html")) {
+        return embedhtml(content);
+    } else if (file.endsWith(".css")) {
+        return embedcss(content);
+    }
+    return content;
+}
+
+function embedhtml(content) {
+    //embed script
+    content = content.replace(/<script[^>]*embed="([^"]+?)"[^>]*>\s*<\/script>/gis, function (match, p1) {
+        return "<script>\n" + embedfile(p1).toString() + "\n</script>";
+    });
+
+    //embed style
+    content = content.replace(/<style[^>]*>(.+?)<\/style>/gis, function (match, p1) {
+        return "<style>\n" + embedcss(p1) + "\n</style>";
+    });
+    content = content.replace(/<style[^>]*embed="([^"]+?)"[^>]*>\s*<\/style>/gis, function (match, p1) {
+        return "<style>\n" + embedfile(p1).toString() + "\n</style>";
+    });
+    return content;
+}
+
+function embedcss(content) {
+    content = content.replace(/background-image:\s*url\("([^;]+)"\);/gis, function (match, p1) {
+        return "background-image: url(\"data:image/png;base64," + loadLocalFile(p1).toString("base64") + "\");";
+    });
+    return content;
+}
 
 
 //http server
+const file_index = embedfile("Chess.html");
+
 function handlehttp(req, res) {
     res.writeHead(200, {'Content-Type': 'text/html'});
-
-    res.write(file_index);
-
-    res.end();
+    res.end(file_index);
 }
 
 io.on('connection', function (socket) {
