@@ -1,6 +1,8 @@
-var http = require('http').createServer(handlehttp);
-var io = require('socket.io')(http);
-var fs = require('fs');
+const http = require('http').createServer(handlehttp);
+const io = require('socket.io')(http);
+const fs = require('fs');
+const request = require('request');
+const xml2js = require('xml2js');
 
 http.listen(8080);
 
@@ -50,17 +52,65 @@ function handlehttp(req, res) {
     res.end(file_index);
 }
 
-io.on('connection', function () {
+io.on('connect', function () {
     console.log('a user connected');
-    io.emit('chessfield',
-        [
-            ["0", "0", "figure-king-white", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0"],
-        ]);
+
+    var refreshIntervalId = setInterval(function () {
+        request.get(
+            'http://www.game-engineering.de:8080/rest/schach/spiel/getAktuelleBelegung/0',
+            function (err, response, body) {
+                if (err)
+                    throw err;
+                if (response && (response.statusCode !== 200))
+                    throw "statusCode: " + response.statusCode;
+
+                xml2js.parseString(body, function (err, result) {
+                    if (err)
+                        throw err;
+
+                    const properties = result.propertiesarray.properties;
+                    var field = Array.from(Array(8), () => new Array(8));
+                    properties.forEach(function (entry) {
+                        if (entry.entry.find(function (element) {
+                            return element['$'].key === "klasse";
+                        })['_'] === "D_Belegung") {
+                            return;
+                        }
+
+                        const typ = entry.entry.find(function (element) {
+                            return element['$'].key === "typ";
+                        })['_'];
+                        const weiss = entry.entry.find(function (element) {
+                            return element['$'].key === "isWeiss";
+                        })['_'] === "true";
+                        const position = entry.entry.find(function (element) {
+                            return element['$'].key === "position";
+                        })['_'];
+
+                        if (position) {
+                            const x = position.codePointAt(0) - 'a'.codePointAt(0);
+                            const y = position.codePointAt(1) - '1'.codePointAt(0);
+
+                            field[y][x] = `figure-${figuresMap[typ]}-${weiss ? "white" : "black"}`;
+                        }
+                    });
+                    io.emit('chessfield', field);
+                })
+            }
+        );
+    }, 1000);
+
+    io.on('disconnect', function () {
+        console.log('a user disconnected');
+        clearInterval(refreshIntervalId);
+    });
 });
+
+const figuresMap = {
+    "Turm": "rook",
+    "Springer": "knight",
+    "Laeufer": "bishop",
+    "Dame": "queen",
+    "Koenig": "king",
+    "Bauer": "pawn"
+};
