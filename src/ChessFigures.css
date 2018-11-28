@@ -1,0 +1,51 @@
+[class*=figure] {
+    background-size: cover;
+}
+
+.figure-king-white {
+    background-image: url("/images/king_white.png");
+}
+
+.figure-queen-white {
+    background-image: url("/images/queen_white.png");
+}
+
+.figure-knight-white {
+    background-image: url("/images/knight_white.png");
+}
+
+.figure-bishop-white {
+    background-image: url("/images/bishop_white.png");
+}
+
+.figure-rook-white {
+    background-image: url("/images/rook_white.png");
+}
+
+.figure-pawn-white {
+    background-image: url("/images/pawn_white.png");
+}
+
+.figure-king-black {
+    background-image: url("/images/king_black.png");
+}
+
+.figure-queen-black {
+    background-image: url("/images/queen_black.png");
+}
+
+.figure-knight-black {
+    background-image: url("/images/knight_black.png");
+}
+
+.figure-bishop-black {
+    background-image: url("/images/bishop_black.png");
+}
+
+.figure-rook-black {
+    background-image: url("/images/rook_black.png");
+}
+
+.figure-pawn-black {
+    background-image: url("/images/pawn_black.png");
+}
