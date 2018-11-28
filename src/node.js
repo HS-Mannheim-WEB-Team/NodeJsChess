@@ -20,15 +20,15 @@ function embedfile(file) {
 
 function embedhtml(content) {
     //embed script
-    content = content.replace(/<script[^>]*embed="([^"]+?)"[^>]*>\s*<\/script>/gis, function (match, p1) {
+    content = content.replace(/<script[^>]*embed="([^"]+?)"[^>]*(?:\/\s*>|>\s*<\/script>)/gis, function (match, p1) {
         return "<script>\n" + embedfile(p1).toString() + "\n</script>";
     });
 
     //embed style
-    content = content.replace(/<style[^>]*>(.+?)<\/style>/gis, function (match, p1) {
+    content = content.replace(/<style[^>]*(!?embed=)>(.+?)<\/style>/gis, function (match, p1) {
         return "<style>\n" + embedcss(p1) + "\n</style>";
     });
-    content = content.replace(/<style[^>]*embed="([^"]+?)"[^>]*>\s*<\/style>/gis, function (match, p1) {
+    content = content.replace(/<style[^>]*embed="([^"]+?)"[^>]*(?:\/\s*>|>\s*<\/style>)/gis, function (match, p1) {
         return "<style>\n" + embedfile(p1).toString() + "\n</style>";
     });
     return content;
@@ -50,6 +50,6 @@ function handlehttp(req, res) {
     res.end(file_index);
 }
 
-io.on('connection', function (socket) {
+io.on('connection', function () {
     console.log('a user connected');
 });
