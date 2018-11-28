@@ -13,8 +13,6 @@
                 console.log("client: connected");
             });
             socket.on('chessfield', function (figures) {
-                console.log("Recieved: " + figures);
-
                 let htmlout = "\n";
                 for (let y = 0; y < 10; y++) {
                     htmlout += "<tr>";
