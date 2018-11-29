@@ -1,11 +1,14 @@
+//Imports
 const http = require('http').createServer(handlehttp);
 const io = require('socket.io')(http);
 const fs = require('fs');
 const request = require('request');
 const xml2js = require('xml2js');
 
+//Start http Server
 http.listen(8080);
 
+//embedder
 function loadLocalFile(name) {
     return fs.readFileSync(__dirname + "/" + name);
 }
@@ -52,10 +55,13 @@ function handlehttp(req, res) {
     res.end(file_index);
 }
 
+//socket.io server side
 io.on('connect', function () {
     console.log('a user connected');
 
     var refreshIntervalId = setInterval(function () {
+
+        //chess backend query
         request.get(
             'http://www.game-engineering.de:8080/rest/schach/spiel/getAktuelleBelegung/0',
             function (err, response, body) {
@@ -64,6 +70,7 @@ io.on('connect', function () {
                 if (response && (response.statusCode !== 200))
                     throw "statusCode: " + response.statusCode;
 
+                //xml parsing -> field
                 xml2js.parseString(body, function (err, result) {
                     if (err)
                         throw err;
@@ -94,12 +101,15 @@ io.on('connect', function () {
                             field[y][x] = `figure-${figuresMap[typ]}-${weiss ? "white" : "black"}`;
                         }
                     });
+
+                    //send field
                     io.emit('chessfield', field);
                 })
             }
         );
     }, 1000);
 
+    //disconnect -> stop queries
     io.on('disconnect', function () {
         console.log('a user disconnected');
         clearInterval(refreshIntervalId);

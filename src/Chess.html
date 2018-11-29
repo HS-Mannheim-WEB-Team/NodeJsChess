@@ -4,14 +4,17 @@
 	<meta charset="UTF-8">
 	<title>NodeJs Chess</title>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script embed="/include/socket.io.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"/>
+	<script embed="/include/socket.io.js"/>
 	<script>
         $(document).ready(function () {
+            //socket.io connection
             const socket = io.connect('http://localhost:8080');
             socket.on('connect', function () {
                 console.log("client: connected");
             });
+
+            //rebuild chessfield
             socket.on('chessfield', function (figures) {
                 let htmlout = "\n";
                 for (let y = 0; y < 10; y++) {
@@ -27,7 +30,7 @@
                         } else if (borderNumber) {
                             htmlout += `<td class="${fieldBlack} field-border">${String.fromCharCode('A'.charCodeAt(0) + x - 1)}</td>`;
                         } else {
-                            htmlout += `<td class="${fieldBlack} field-inner${figures[y - 1][x - 1] ? " " + figures[y - 1][x - 1].toString() : ""}"/>`;
+                            htmlout += `<td id="field-id-${y}-${x}" class="${fieldBlack} field-inner${figures[y - 1][x - 1] ? " " + figures[y - 1][x - 1].toString() : ""}"/>`;
                         }
                     }
                     htmlout += "</tr>\n";
@@ -67,9 +70,6 @@
 
 <table id="chessfield">
 </table>
-<div class="figure-pawn-white"></div>
-<div class="figure-pawn-black"></div>
-<div class="figure-king-black"></div>
 
 <p id="credits">
 	Credits: <br>
