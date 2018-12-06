@@ -14,7 +14,7 @@ function loadLocalFile(name) {
 }
 
 function embedfile(file) {
-	var content = loadLocalFile(file).toString();
+	const content = loadLocalFile(file).toString();
 	if (file.endsWith(".html")) {
 		return embedhtml(content);
 	} else if (file.endsWith(".css")) {
@@ -55,67 +55,76 @@ function handlehttp(req, res) {
 	res.end(file_index);
 }
 
+//xml parsing utils
+function forEachXmlEntryFromUrl(url, func, end) {
+	request.get(url, function (err, response, body) {
+		if (err)
+			throw err;
+		if (response && (response.statusCode !== 200))
+			throw "statusCode: " + response.statusCode;
+
+		forEachXmlEntryFromString(body, func);
+		end();
+	});
+}
+
+function forEachXmlEntryFromString(body, func) {
+	xml2js.parseString(body, function (err, result) {
+		if (err)
+			throw err;
+
+		if (result.propertiesarray) {
+			//multi entry
+			result.propertiesarray.properties.forEach(function (entry) {
+				func(entry.entry);
+			});
+		} else {
+			//single entry
+			func(result.properties.entry);
+		}
+	});
+}
+
+function findEntry(entry, key) {
+	return entry.find(function (element) {
+		return element['$'].key === key;
+	})['_'];
+}
+
 //socket.io server side
-io.on('connect', function () {
+io.on('connection', function (socket) {
 	console.log('a user connected');
 
 	update();
-	var refreshIntervalId = setInterval(update, 1000);
+	const refreshIntervalId = setInterval(update, 1000);
 
 	//disconnect -> stop queries
-	io.on('disconnect', function () {
+	socket.on('disconnect', function () {
 		console.log('a user disconnected');
 		clearInterval(refreshIntervalId);
 	});
 });
 
 function update() {
-	//chess backend query
-	request.get(
-		'http://www.game-engineering.de:8080/rest/schach/spiel/getAktuelleBelegung/0',
-		function (err, response, body) {
-			if (err)
-				throw err;
-			if (response && (response.statusCode !== 200))
-				throw "statusCode: " + response.statusCode;
-
-			//xml parsing -> field
-			xml2js.parseString(body, function (err, result) {
-				if (err)
-					throw err;
-
-				const properties = result.propertiesarray.properties;
-				var field = Array.from(Array(8), () => new Array(8));
-				properties.forEach(function (entry) {
-					if (entry.entry.find(function (element) {
-						return element['$'].key === "klasse";
-					})['_'] === "D_Belegung") {
-						return;
-					}
-
-					const typ = entry.entry.find(function (element) {
-						return element['$'].key === "typ";
-					})['_'];
-					const weiss = entry.entry.find(function (element) {
-						return element['$'].key === "isWeiss";
-					})['_'] === "true";
-					const position = entry.entry.find(function (element) {
-						return element['$'].key === "position";
-					})['_'];
-
-					if (position) {
-						const x = position.codePointAt(0) - 'a'.codePointAt(0);
-						const y = position.codePointAt(1) - '1'.codePointAt(0);
-
-						field[y][x] = `figure-${figuresMap[typ]}-${weiss ? "white" : "black"}`;
-					}
-				});
-
-				//send field
-				io.emit('chessfield', field);
-			})
+	let field = Array.from(Array(8), () => new Array(8));
+	forEachXmlEntryFromUrl('http://www.game-engineering.de:8080/rest/schach/spiel/getAktuelleBelegung/0', function (entry) {
+		if (findEntry(entry, 'klasse') !== "D_Figur") {
+			return;
 		}
-	);
+
+		const typ = findEntry(entry, 'typ');
+		const weiss = findEntry(entry, 'isWeiss') === 'true';
+		const position = findEntry(entry, 'position');
+
+		if (position) {
+			const x = position.codePointAt(0) - 'a'.codePointAt(0);
+			const y = position.codePointAt(1) - '1'.codePointAt(0);
+
+			field[y][x] = `figure-${figuresMap[typ]}-${weiss ? "white" : "black"}`;
+		}
+	}, function () {
+		io.emit('chessfield', field);
+	});
 }
 
 const figuresMap = {

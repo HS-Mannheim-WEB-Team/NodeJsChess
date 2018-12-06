@@ -1,8 +1,12 @@
 $(document).ready(function () {
 	//socket.io connection
-	const socket = io.connect('http://localhost:8080');
+	const socket = io.connect();
+
 	socket.on('connect', function () {
 		console.log("client: connected");
+	});
+	socket.on('disconnect', function () {
+		console.log("client: disconnected");
 	});
 
 	//rebuild chessfield
