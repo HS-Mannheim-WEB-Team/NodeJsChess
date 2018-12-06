@@ -94,44 +94,22 @@ function findEntry(entry, key) {
 io.on('connection', function (socket) {
 	console.log('a user connected');
 
-	update();
-	const refreshIntervalId = setInterval(update, 1000);
-
-	//disconnect -> stop queries
 	socket.on('disconnect', function () {
 		console.log('a user disconnected');
-		clearInterval(refreshIntervalId);
 	});
-});
 
-function update() {
-	let field = Array.from(Array(8), () => new Array(8));
-	httpGet('http://www.game-engineering.de:8080/rest/schach/spiel/getAktuelleBelegung/0', function (response, body) {
-		forEachXmlEntry(boy, function (entry) {
-			if (findEntry(entry, 'klasse') !== "D_Figur") {
-				return;
-			}
+	socket.on('moveRequest', function (from, to) {
+		let meldung;
+		httpGet("http://www.game-engineering.de:8080/rest/schach/spiel/ziehe/0/" + from + "/" + to, function (request, body) {
+			forEachXmlEntry(body, function (entry) {
+				const klasse = findEntry(entry, "klasse");
+				if (!(klasse === "D_OK" || klasse === "D_Fehler")) {
+					return;
+				}
 
-			const typ = findEntry(entry, 'typ');
-			const weiss = findEntry(entry, 'isWeiss') === 'true';
-			const position = findEntry(entry, 'position');
-
-			if (position) {
-				const x = position.codePointAt(0) - 'a'.codePointAt(0);
-				const y = position.codePointAt(1) - '1'.codePointAt(0);
-
-				field[y][x] = `figure-${figuresMap[typ]}-${weiss ? "white" : "black"}`;
-			}
+				meldung = findEntry(entry, "meldung");
+			});
+			socket.emit('moveResponse', meldung ? meldung : "D_Fehler");
 		});
-		io.emit('chessfield', field);
-	});
-}
-
-const figuresMap = {
-	"Turm": "rook",
-	"Springer": "knight",
-	"Laeufer": "bishop",
-	"Dame": "queen",
-	"Koenig": "king",
-	"Bauer": "pawn"
-};
+	})
+});
