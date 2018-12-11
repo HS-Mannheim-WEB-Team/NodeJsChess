@@ -56,19 +56,18 @@ function handlehttp(req, res) {
 }
 
 //xml parsing utils
-function forEachXmlEntryFromUrl(url, func, end) {
+function httpGet(url, func) {
 	request.get(url, function (err, response, body) {
 		if (err)
 			throw err;
 		if (response && (response.statusCode !== 200))
 			throw "statusCode: " + response.statusCode;
 
-		forEachXmlEntryFromString(body, func);
-		end();
+		func(response, body);
 	});
 }
 
-function forEachXmlEntryFromString(body, func) {
+function forEachXmlEntry(body, func) {
 	xml2js.parseString(body, function (err, result) {
 		if (err)
 			throw err;
@@ -107,22 +106,23 @@ io.on('connection', function (socket) {
 
 function update() {
 	let field = Array.from(Array(8), () => new Array(8));
-	forEachXmlEntryFromUrl('http://www.game-engineering.de:8080/rest/schach/spiel/getAktuelleBelegung/0', function (entry) {
-		if (findEntry(entry, 'klasse') !== "D_Figur") {
-			return;
-		}
+	httpGet('http://www.game-engineering.de:8080/rest/schach/spiel/getAktuelleBelegung/0', function (response, body) {
+		forEachXmlEntry(boy, function (entry) {
+			if (findEntry(entry, 'klasse') !== "D_Figur") {
+				return;
+			}
 
-		const typ = findEntry(entry, 'typ');
-		const weiss = findEntry(entry, 'isWeiss') === 'true';
-		const position = findEntry(entry, 'position');
+			const typ = findEntry(entry, 'typ');
+			const weiss = findEntry(entry, 'isWeiss') === 'true';
+			const position = findEntry(entry, 'position');
 
-		if (position) {
-			const x = position.codePointAt(0) - 'a'.codePointAt(0);
-			const y = position.codePointAt(1) - '1'.codePointAt(0);
+			if (position) {
+				const x = position.codePointAt(0) - 'a'.codePointAt(0);
+				const y = position.codePointAt(1) - '1'.codePointAt(0);
 
-			field[y][x] = `figure-${figuresMap[typ]}-${weiss ? "white" : "black"}`;
-		}
-	}, function () {
+				field[y][x] = `figure-${figuresMap[typ]}-${weiss ? "white" : "black"}`;
+			}
+		});
 		io.emit('chessfield', field);
 	});
 }
