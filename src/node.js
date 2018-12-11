@@ -99,6 +99,11 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('moveRequest', function (from, to) {
+		if (!from || !to) {
+			socket.emit('moveResponse', "Input parameters empty!");
+			return;
+		}
+
 		let meldung;
 		httpGet("http://www.game-engineering.de:8080/rest/schach/spiel/ziehe/0/" + from + "/" + to, function (request, body) {
 			forEachXmlEntry(body, function (entry) {
@@ -109,7 +114,7 @@ io.on('connection', function (socket) {
 
 				meldung = findEntry(entry, "meldung");
 			});
-			socket.emit('moveResponse', meldung ? meldung : "D_Fehler");
+			socket.emit('moveResponse', meldung ? meldung : "D_Fehler without message");
 		});
 	})
 });
