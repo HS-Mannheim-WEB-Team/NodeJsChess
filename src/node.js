@@ -106,13 +106,13 @@ io.on('connection', function (socket) {
 
 		let meldung;
 		httpGet("http://www.game-engineering.de:8080/rest/schach/spiel/ziehe/0/" + from + "/" + to, function (request, body) {
-			forEachXmlEntry(body, function (entry) {
-				const klasse = findEntry(entry, "klasse");
+			forEachXmlEntry(body, function (property) {
+				const klasse = findEntry(property, "klasse");
 				if (!(klasse === "D_OK" || klasse === "D_Fehler")) {
 					return;
 				}
 
-				meldung = findEntry(entry, "meldung");
+				meldung = findEntry(property, "meldung");
 			});
 			socket.emit('moveResponse', meldung ? meldung : "D_Fehler without message");
 		});
