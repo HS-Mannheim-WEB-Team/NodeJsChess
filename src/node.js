@@ -92,12 +92,6 @@ function xmlPropertyToObject(xmlProperty) {
 	return property;
 }
 
-function findEntry(entry, key) {
-	return entry.find(function (element) {
-		return element['$'].key === key;
-	})['_'];
-}
-
 //socket.io server side
 io.on('connection', function (socket) {
 	console.log('a user connected');
