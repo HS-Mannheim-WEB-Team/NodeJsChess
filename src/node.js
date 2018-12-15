@@ -107,7 +107,7 @@ io.on('connection', function (socket) {
 function update() {
 	let field = Array.from(Array(8), () => new Array(8));
 	httpGet('http://www.game-engineering.de:8080/rest/schach/spiel/getAktuelleBelegung/0', function (response, body) {
-		forEachXmlEntry(boy, function (entry) {
+		forEachXmlEntry(body, function (entry) {
 			if (findEntry(entry, 'klasse') !== "D_Figur") {
 				return;
 			}
