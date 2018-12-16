@@ -11,12 +11,13 @@ $(document).ready(function () {
 
 	//rebuild chessfield
 	socket.on('layoutList', function (layoutList) {
-		fillLayoutList(layoutList);
-		drawChessfield(layoutList[layoutList.length - 1].field);
+		layoutListFill(layoutList);
+		// drawChessfield(layoutList[layoutList.length - 1].field);
 	});
 });
 
-function fillLayoutList(layoutList) {
+function layoutListFill(layoutList) {
+	//generate html table
 	let htmlout = "\n";
 	for (let i = 0; i < layoutList.length; i++) {
 		const layout = layoutList[i];
@@ -24,6 +25,13 @@ function fillLayoutList(layoutList) {
 		htmlout += `<tr><td id="layoutList-${i}" class="${fieldColor}">${layout.notation}</td></tr>\n`
 	}
 	$("#layoutList").html(htmlout);
+
+	//attach click listener
+	for (let i = 0; i < layoutList.length; i++) {
+		$(`#layoutList-${i}`).click(function (event) {
+			drawChessfield(layoutList[i].field);
+		});
+	}
 }
 
 function drawChessfield(cssClassChessField) {
