@@ -1,0 +1,15 @@
+/*noinspection CssUnusedSymbol*/
+[class*=layout-list] {
+    width: 200px;
+    height: 30px;
+}
+
+/*noinspection CssUnusedSymbol*/
+.layout-list-black {
+    background-color: antiquewhite;
+}
+
+/*noinspection CssUnusedSymbol*/
+.layout-list-white {
+    background-color: burlywood;
+}

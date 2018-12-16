@@ -1,0 +1,9 @@
+#mainTable > tbody {
+    vertical-align: top;
+}
+
+#layoutListContainer {
+    table-layout: fixed;
+    max-height: 542px;
+    overflow-y: scroll;
+}

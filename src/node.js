@@ -81,6 +81,11 @@ function xmlPropertyToObject(xmlProperty) {
 	return property;
 }
 
+//other utils
+function createEmptyField() {
+	return Array.from(Array(8), () => new Array(8));
+}
+
 //socket.io server side
 io.on('connection', function (socket) {
 	console.log('a user connected');
@@ -96,21 +101,63 @@ io.on('connection', function (socket) {
 });
 
 function update() {
-	request('http://www.game-engineering.de:8080/rest/schach/spiel/getAktuelleBelegung/0').then(function (body) {
-		let field = Array.from(Array(8), () => new Array(8));
-		forEachXmlProperty(body, function (entry) {
-			if (entry.klasse !== "D_Figur") {
-				return;
-			}
+	const id = 0;
 
-			if (entry.position) {
-				const x = entry.position.codePointAt(0) - 'a'.codePointAt(0);
-				const y = entry.position.codePointAt(1) - '1'.codePointAt(0);
+	Promise.all([
+		request('http://www.game-engineering.de:8080/rest/schach/spiel/getSpielDaten/' + id)
+			.then(function (body) {
+				let layoutCnt;
+				forEachXmlProperty(body, function (property) {
+					if (property.klasse !== "D_Spiel") {
+						return;
+					}
 
-				field[y][x] = `figure-${figuresMap[entry.typ]}-${entry.isWeiss === 'true' ? "white" : "black"}`;
-			}
+					layoutCnt = property.anzahlZuege;
+				});
+				return layoutCnt;
+			}),
+		request('http://www.game-engineering.de:8080/rest/schach/spiel/getZugHistorie/' + id)
+			.then(function (body) {
+				let notationList = ['initial'];
+				forEachXmlProperty(body, function (property) {
+					if (property.klasse !== "D_ZugHistorie") {
+						return;
+					}
+					notationList.push(property.zug);
+				});
+				return notationList;
+			})
+	]).then(function (result) {
+		layoutCnt = result[0];
+		notationList = result[1];
+
+		let layoutListPromise = [];
+		for (let i = 0; i <= layoutCnt; i++) {
+			layoutListPromise[i] = request(`http://www.game-engineering.de:8080/rest/schach/spiel/getBelegung/${id}/${i}`)
+				.then(function (body) {
+					let field = createEmptyField();
+					forEachXmlProperty(body, function (property) {
+						if (property.klasse !== "D_Figur") {
+							return;
+						}
+
+						if (property.position) {
+							const x = property.position.codePointAt(0) - 'a'.codePointAt(0);
+							const y = property.position.codePointAt(1) - '1'.codePointAt(0);
+
+							field[y][x] = `figure-${figuresMap[property.typ]}-${property.isWeiss === 'true' ? "white" : "black"}`;
+						}
+					});
+					return {
+						notation: `${i}: ${notationList[i]}`,
+						field: field
+					};
+				});
+		}
+
+		Promise.all(layoutListPromise).then(function (layoutList) {
+			io.emit('layoutList', layoutList);
 		});
-		io.emit('chessfield', field);
 	});
 }
 
