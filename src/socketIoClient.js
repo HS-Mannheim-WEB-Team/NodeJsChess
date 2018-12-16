@@ -1,4 +1,12 @@
+var layoutList = [];
+var currLayoutId = -1;
+
 $(document).ready(function () {
+	setLayoutList([{
+		notation: "initial",
+		field: createEmptyField()
+	}]);
+
 	//socket.io connection
 	const socket = io.connect();
 
@@ -10,28 +18,41 @@ $(document).ready(function () {
 	});
 
 	//rebuild chessfield
-	socket.on('layoutList', function (layoutList) {
-		layoutListFill(layoutList);
-		// drawChessfield(layoutList[layoutList.length - 1].field);
+	socket.on('layoutList', function (newLayoutList) {
+		setLayoutList(newLayoutList);
 	});
 });
 
-function layoutListFill(layoutList) {
+function createEmptyField() {
+	return Array.from(Array(8), () => new Array(8));
+}
+
+function setLayoutList(newLayoutList) {
+	updateChessfield = layoutList.length - 1 === currLayoutId;
+	layoutList = newLayoutList;
+	if (updateChessfield)
+		setChessfield(layoutList.length - 1);
+
 	//generate html table
 	let htmlout = "\n";
-	for (let i = 0; i < layoutList.length; i++) {
-		const layout = layoutList[i];
+	for (let i = 0; i < newLayoutList.length; i++) {
+		const layout = newLayoutList[i];
 		const fieldColor = i % 2 === 0 ? "layout-list-white" : "layout-list-black";
 		htmlout += `<tr><td id="layoutList-${i}" class="${fieldColor}">${layout.notation}</td></tr>\n`
 	}
 	$("#layoutList").html(htmlout);
 
 	//attach click listener
-	for (let i = 0; i < layoutList.length; i++) {
+	for (let i = 0; i < newLayoutList.length; i++) {
 		$(`#layoutList-${i}`).click(function (event) {
-			drawChessfield(layoutList[i].field);
+			setChessfield(i);
 		});
 	}
+}
+
+function setChessfield(layoutId) {
+	currLayoutId = layoutId;
+	drawChessfield(layoutList[layoutId].field);
 }
 
 function drawChessfield(cssClassChessField) {

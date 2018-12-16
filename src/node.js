@@ -81,6 +81,11 @@ function xmlPropertyToObject(xmlProperty) {
 	return property;
 }
 
+//other utils
+function createEmptyField() {
+	return Array.from(Array(8), () => new Array(8));
+}
+
 //socket.io server side
 io.on('connection', function (socket) {
 	console.log('a user connected');
@@ -112,7 +117,7 @@ function update() {
 		for (let i = 0; i < layoutCnt; i++) {
 			layoutListPromise[i] = request(`http://www.game-engineering.de:8080/rest/schach/spiel/getBelegung/${id}/${i}`)
 				.then(function (body) {
-					let field = Array.from(Array(8), () => new Array(8));
+					let field = createEmptyField();
 					forEachXmlProperty(body, function (property) {
 						if (property.klasse !== "D_Figur") {
 							return;
