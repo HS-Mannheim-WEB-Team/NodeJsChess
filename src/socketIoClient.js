@@ -71,7 +71,36 @@ $(document).ready(function () {
 			htmlout += "</tr>\n";
 		}
 		$("#chessfieldContent").html(htmlout);
+
+		for (let y = 0; y < 8; y++) {
+			for (let x = 0; x < 8; x++) {
+				$(`#field-id-${y}-${x}`).click(function (event) {
+					onChessfieldClick(y, x);
+				});
+			}
+		}
 	}
+
+	//move
+	function onChessfieldClick(y, x) {
+		socket.emit('possibleMoveRequest', y, x);
+	}
+
+	socket.on('possibleMoveResponse', function (possibleMoves) {
+		if (layoutList.length - 1 !== currLayoutId) {
+			return;
+		}
+
+		let layout = layoutList[layoutList.length - 1];
+		let draw = createEmptyField();
+
+		for (let y = 0; y < 8; y++) {
+			for (let x = 0; x < 8; x++) {
+				draw[y][x] = `${layout.field[y][x]} ${possibleMoves[y][x]}`.trim();
+			}
+		}
+		drawChessfield(draw);
+	});
 });
 
 function createEmptyField() {

@@ -1,5 +1,6 @@
 [class*=figure] {
     background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .figure-king-white {

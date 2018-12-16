@@ -89,11 +89,14 @@ function createEmptyField() {
 //socket.io server side
 io.on('connection', function (socket) {
 	console.log('a user connected');
-	const id = 0;
 
+	//state
+	const id = 0;
+	let prevLayoutCount = -1;
+
+	//update query
 	update();
 	const refreshIntervalId = setInterval(update, 1000);
-
 	//disconnect -> stop queries
 	socket.on('disconnect', function () {
 		console.log('a user disconnected');
@@ -129,6 +132,10 @@ io.on('connection', function (socket) {
 			layoutCnt = result[0];
 			notationList = result[1];
 
+			if (layoutCnt === prevLayoutCount)
+				return;
+			prevLayoutCount = layoutCnt;
+
 			let layoutListPromise = [];
 			for (let i = 0; i <= layoutCnt; i++) {
 				layoutListPromise[i] = request(`http://www.game-engineering.de:8080/rest/schach/spiel/getBelegung/${id}/${i}`)
@@ -158,6 +165,26 @@ io.on('connection', function (socket) {
 			});
 		});
 	}
+
+	//possibleMoves
+	socket.on('possibleMoveRequest', function (y, x) {
+		var url = `http://www.game-engineering.de:8080/rest/schach/spiel/getErlaubteZuege/${id}/${String.fromCodePoint(x + 'a'.codePointAt(0))}${String.fromCodePoint(y + '1'.codePointAt(0))}`;
+		console.log(url);
+		request(url)
+			.then(function (body) {
+				let field = createEmptyField();
+				forEachXmlProperty(body, function (property) {
+					if (property.klasse !== "D_Zug") {
+						return
+					}
+
+					const x = property.nach.codePointAt(0) - 'a'.codePointAt(0);
+					const y = property.nach.codePointAt(1) - '1'.codePointAt(0);
+					field[y][x] = 'field-marked';
+				});
+				socket.emit('possibleMoveResponse', field);
+			});
+	});
 });
 
 const figuresMap = {
