@@ -37,7 +37,7 @@ function setLayoutList(newLayoutList) {
 		const fieldColor = i % 2 === 0 ? "layout-list-white" : "layout-list-black";
 		htmlout += `<tr><td id="layoutList-${i}" class="${fieldColor}">${layout.notation}</td></tr>\n`
 	}
-	$("#layoutList").html(htmlout);
+	$("#layoutListContent").html(htmlout);
 
 	//attach click listener
 	for (let i = 0; i < newLayoutList.length; i++) {
@@ -72,5 +72,5 @@ function drawChessfield(cssClassChessField) {
 		}
 		htmlout += "</tr>\n";
 	}
-	$("#chessfield").html(htmlout);
+	$("#chessfieldContent").html(htmlout);
 }
