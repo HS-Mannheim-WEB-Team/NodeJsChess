@@ -89,6 +89,7 @@ function createEmptyField() {
 //socket.io server side
 io.on('connection', function (socket) {
 	console.log('a user connected');
+	const id = 0;
 
 	update();
 	const refreshIntervalId = setInterval(update, 1000);
@@ -98,68 +99,66 @@ io.on('connection', function (socket) {
 		console.log('a user disconnected');
 		clearInterval(refreshIntervalId);
 	});
-});
 
-function update() {
-	const id = 0;
-
-	Promise.all([
-		request('http://www.game-engineering.de:8080/rest/schach/spiel/getSpielDaten/' + id)
-			.then(function (body) {
-				let layoutCnt;
-				forEachXmlProperty(body, function (property) {
-					if (property.klasse !== "D_Spiel") {
-						return;
-					}
-
-					layoutCnt = property.anzahlZuege;
-				});
-				return layoutCnt;
-			}),
-		request('http://www.game-engineering.de:8080/rest/schach/spiel/getZugHistorie/' + id)
-			.then(function (body) {
-				let notationList = ['initial'];
-				forEachXmlProperty(body, function (property) {
-					if (property.klasse !== "D_ZugHistorie") {
-						return;
-					}
-					notationList.push(property.zug);
-				});
-				return notationList;
-			})
-	]).then(function (result) {
-		layoutCnt = result[0];
-		notationList = result[1];
-
-		let layoutListPromise = [];
-		for (let i = 0; i <= layoutCnt; i++) {
-			layoutListPromise[i] = request(`http://www.game-engineering.de:8080/rest/schach/spiel/getBelegung/${id}/${i}`)
+	function update() {
+		Promise.all([
+			request('http://www.game-engineering.de:8080/rest/schach/spiel/getSpielDaten/' + id)
 				.then(function (body) {
-					let field = createEmptyField();
+					let layoutCnt;
 					forEachXmlProperty(body, function (property) {
-						if (property.klasse !== "D_Figur") {
+						if (property.klasse !== "D_Spiel") {
 							return;
 						}
 
-						if (property.position) {
-							const x = property.position.codePointAt(0) - 'a'.codePointAt(0);
-							const y = property.position.codePointAt(1) - '1'.codePointAt(0);
-
-							field[y][x] = `figure-${figuresMap[property.typ]}-${property.isWeiss === 'true' ? "white" : "black"}`;
-						}
+						layoutCnt = property.anzahlZuege;
 					});
-					return {
-						notation: `${i}: ${notationList[i]}`,
-						field: field
-					};
-				});
-		}
+					return layoutCnt;
+				}),
+			request('http://www.game-engineering.de:8080/rest/schach/spiel/getZugHistorie/' + id)
+				.then(function (body) {
+					let notationList = ['initial'];
+					forEachXmlProperty(body, function (property) {
+						if (property.klasse !== "D_ZugHistorie") {
+							return;
+						}
+						notationList.push(property.zug);
+					});
+					return notationList;
+				})
+		]).then(function (result) {
+			layoutCnt = result[0];
+			notationList = result[1];
 
-		Promise.all(layoutListPromise).then(function (layoutList) {
-			io.emit('layoutList', layoutList);
+			let layoutListPromise = [];
+			for (let i = 0; i <= layoutCnt; i++) {
+				layoutListPromise[i] = request(`http://www.game-engineering.de:8080/rest/schach/spiel/getBelegung/${id}/${i}`)
+					.then(function (body) {
+						let field = createEmptyField();
+						forEachXmlProperty(body, function (property) {
+							if (property.klasse !== "D_Figur") {
+								return;
+							}
+
+							if (property.position) {
+								const x = property.position.codePointAt(0) - 'a'.codePointAt(0);
+								const y = property.position.codePointAt(1) - '1'.codePointAt(0);
+
+								field[y][x] = `figure-${figuresMap[property.typ]}-${property.isWeiss === 'true' ? "white" : "black"}`;
+							}
+						});
+						return {
+							notation: `${i}: ${notationList[i]}`,
+							field: field
+						};
+					});
+			}
+
+			Promise.all(layoutListPromise).then(function (layoutList) {
+				socket.emit('layoutList', layoutList);
+			});
 		});
-	});
-}
+	}
+});
 
 const figuresMap = {
 	"Turm": "rook",
