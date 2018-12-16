@@ -10,7 +10,9 @@ $(document).ready(function () {
 	});
 
 	//rebuild chessfield
-	socket.on('chessfield', drawChessfield);
+	socket.on('layoutList', function (layoutList) {
+		drawChessfield(layoutList[layoutList.length - 1]);
+	});
 });
 
 function drawChessfield(cssClassChessField) {
