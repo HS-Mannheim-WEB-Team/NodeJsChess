@@ -2,10 +2,7 @@ var layoutList = [];
 var currLayoutId = -1;
 
 $(document).ready(function () {
-	setLayoutList([{
-		notation: "initial",
-		field: createEmptyField()
-	}]);
+	drawChessfield(createEmptyField());
 
 	//socket.io connection
 	const socket = io.connect();
