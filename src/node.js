@@ -168,9 +168,7 @@ io.on('connection', function (socket) {
 
 	//possibleMoves
 	socket.on('possibleMoveRequest', function (y, x) {
-		var url = `http://www.game-engineering.de:8080/rest/schach/spiel/getErlaubteZuege/${id}/${String.fromCodePoint(x + 'a'.codePointAt(0))}${String.fromCodePoint(y + '1'.codePointAt(0))}`;
-		console.log(url);
-		request(url)
+		request(`http://www.game-engineering.de:8080/rest/schach/spiel/getErlaubteZuege/${id}/${String.fromCodePoint(x + 'a'.codePointAt(0))}${String.fromCodePoint(y + '1'.codePointAt(0))}`)
 			.then(function (body) {
 				let field = createEmptyField();
 				forEachXmlProperty(body, function (property) {
