@@ -2,7 +2,7 @@
 const http = require('http').createServer(handlehttp);
 const io = require('socket.io')(http);
 const fs = require('fs');
-const request = require('request');
+const request = require('request-promise');
 const xml2js = require('xml2js');
 
 //Start http Server
@@ -56,17 +56,6 @@ function handlehttp(req, res) {
 }
 
 //xml parsing utils
-function httpGet(url, func) {
-	request.get(url, function (err, response, body) {
-		if (err)
-			throw err;
-		if (response && (response.statusCode !== 200))
-			throw "statusCode: " + response.statusCode;
-
-		func(response, body);
-	});
-}
-
 function forEachXmlProperty(body, func) {
 	xml2js.parseString(body, function (err, result) {
 		if (err)
@@ -107,8 +96,8 @@ io.on('connection', function (socket) {
 });
 
 function update() {
-	let field = Array.from(Array(8), () => new Array(8));
-	httpGet('http://www.game-engineering.de:8080/rest/schach/spiel/getAktuelleBelegung/0', function (response, body) {
+	request('http://www.game-engineering.de:8080/rest/schach/spiel/getAktuelleBelegung/0').then(function (body) {
+		let field = Array.from(Array(8), () => new Array(8));
 		forEachXmlProperty(body, function (entry) {
 			if (entry.klasse !== "D_Figur") {
 				return;
