@@ -11,26 +11,37 @@ $(document).ready(function () {
 
 	//rebuild chessfield
 	socket.on('layoutList', function (layoutList) {
-		drawChessfield(layoutList[layoutList.length - 1]);
+		fillLayoutList(layoutList);
+		drawChessfield(layoutList[layoutList.length - 1].field);
 	});
 });
+
+function fillLayoutList(layoutList) {
+	let htmlout = "\n";
+	for (let i = 0; i < layoutList.length; i++) {
+		const layout = layoutList[i];
+		const fieldColor = i % 2 === 0 ? "layout-list-white" : "layout-list-black";
+		htmlout += `<tr><td id="layoutList-${i}" class="${fieldColor}">${layout.notation}</td></tr>\n`
+	}
+	$("#layoutList").html(htmlout);
+}
 
 function drawChessfield(cssClassChessField) {
 	let htmlout = "\n";
 	for (let y = 0; y < 10; y++) {
 		htmlout += "<tr>";
 		for (let x = 0; x < 10; x++) {
-			const fieldBlack = (x + y) % 2 === 0 ? "field-black" : "field-white";
+			const fieldColor = (x + y) % 2 === 0 ? "field-white" : "field-black";
 			const borderLetter = x === 0 || x === 9;
 			const borderNumber = y === 0 || y === 9;
 			if (borderLetter && borderNumber) {
-				htmlout += `<td class="${fieldBlack} field-border"/>`;
+				htmlout += `<td class="${fieldColor} field-border"/>`;
 			} else if (borderLetter) {
-				htmlout += `<td class="${fieldBlack} field-border">${String.fromCharCode('8'.charCodeAt(0) - y + 1)}</td>`;
+				htmlout += `<td class="${fieldColor} field-border">${String.fromCharCode('8'.charCodeAt(0) - y + 1)}</td>`;
 			} else if (borderNumber) {
-				htmlout += `<td class="${fieldBlack} field-border">${String.fromCharCode('A'.charCodeAt(0) + x - 1)}</td>`;
+				htmlout += `<td class="${fieldColor} field-border">${String.fromCharCode('A'.charCodeAt(0) + x - 1)}</td>`;
 			} else {
-				htmlout += `<td id="field-id-${y}-${x}" class="${fieldBlack} field-inner${cssClassChessField[y - 1][x - 1] ? " " + cssClassChessField[y - 1][x - 1].toString() : ""}"/>`;
+				htmlout += `<td id="field-id-${y}-${x}" class="${fieldColor} field-inner${cssClassChessField[y - 1][x - 1] ? " " + cssClassChessField[y - 1][x - 1].toString() : ""}"/>`;
 			}
 		}
 		htmlout += "</tr>\n";

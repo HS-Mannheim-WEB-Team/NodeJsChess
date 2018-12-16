@@ -8,14 +8,30 @@
     <script embed="include/socket.io.js"></script>
     <script embed="socketIoClient.js"></script>
 
-    <style embed="ChessFigures.css"></style>
+    <style embed="MainLayout.css"></style>
     <style embed="ChessField.css"></style>
+    <style embed="ChessFigures.css"></style>
+    <style embed="LayoutList.css"></style>
 </head>
 <body>
 
 <h1>NodeJs Chess</h1>
 
-<table id="chessfield">
+<table id="mainTable">
+    <tbody>
+    <tr>
+        <td>
+            <table>
+                <tbody id="chessfield"></tbody>
+            </table>
+        </td>
+        <td>
+            <table>
+                <tbody id="layoutList"></tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
 </table>
 
 <p id="credits">

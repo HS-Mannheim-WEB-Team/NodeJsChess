@@ -125,7 +125,10 @@ function update() {
 							field[y][x] = `figure-${figuresMap[property.typ]}-${property.isWeiss === 'true' ? "white" : "black"}`;
 						}
 					});
-					return field;
+					return {
+						notation: i,
+						field: field
+					};
 				});
 		}
 
