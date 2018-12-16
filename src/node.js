@@ -101,17 +101,35 @@ io.on('connection', function (socket) {
 });
 
 function update() {
-	id = 0;
-	request('http://www.game-engineering.de:8080/rest/schach/spiel/getSpielDaten/' + id).then(function (body) {
+	const id = 0;
 
-		let layoutCnt;
-		forEachXmlProperty(body, function (property) {
-			if (property.klasse !== "D_Spiel") {
-				return;
-			}
+	Promise.all([
+		request('http://www.game-engineering.de:8080/rest/schach/spiel/getSpielDaten/' + id)
+			.then(function (body) {
+				let layoutCnt;
+				forEachXmlProperty(body, function (property) {
+					if (property.klasse !== "D_Spiel") {
+						return;
+					}
 
-			layoutCnt = property.anzahlZuege;
-		});
+					layoutCnt = property.anzahlZuege;
+				});
+				return layoutCnt;
+			}),
+		request('http://www.game-engineering.de:8080/rest/schach/spiel/getZugHistorie/' + id)
+			.then(function (body) {
+				let notationList = ['initial'];
+				forEachXmlProperty(body, function (property) {
+					if (property.klasse !== "D_ZugHistorie") {
+						return;
+					}
+					notationList.push(property.zug);
+				});
+				return notationList;
+			})
+	]).then(function (result) {
+		layoutCnt = result[0];
+		notationList = result[1];
 
 		let layoutListPromise = [];
 		for (let i = 0; i <= layoutCnt; i++) {
@@ -131,7 +149,7 @@ function update() {
 						}
 					});
 					return {
-						notation: i,
+						notation: `${i}: ${notationList[i]}`,
 						field: field
 					};
 				});
