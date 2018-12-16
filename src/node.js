@@ -110,7 +110,7 @@ function update() {
 
 		let layoutListPromise = [];
 		for (let i = 0; i < layoutCnt; i++) {
-			layoutListPromise[i] = request('http://www.game-engineering.de:8080/rest/schach/spiel/getAktuelleBelegung/' + id)
+			layoutListPromise[i] = request(`http://www.game-engineering.de:8080/rest/schach/spiel/getBelegung/${id}/${i}`)
 				.then(function (body) {
 					let field = Array.from(Array(8), () => new Array(8));
 					forEachXmlProperty(body, function (property) {
