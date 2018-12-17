@@ -28,8 +28,23 @@
     overflow-y: scroll;
 }
 
+#settings {
+    background-color: antiquewhite;
+    text-align: left;
+    font-size: 16px;
+}
+
+#newGame {
+    display: inline-block;
+    background-color: burlywood;
+}
+
+[id*=settingColor] {
+    background-color: burlywood;
+}
+
 #credits {
-    text-align: center;
+    text-align: left;
     font-size: 16px;
     background-color: antiquewhite;
 }

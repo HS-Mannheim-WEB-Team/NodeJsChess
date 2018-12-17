@@ -1,15 +1,12 @@
-/*noinspection CssUnusedSymbol*/
 [class*=field] {
     width: 50px;
     height: 50px;
 }
 
-/*noinspection CssUnusedSymbol*/
 .field-black {
     background-color: antiquewhite;
 }
 
-/*noinspection CssUnusedSymbol*/
 .field-white {
     background-color: burlywood;
 }
