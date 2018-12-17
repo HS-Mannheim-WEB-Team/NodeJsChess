@@ -87,11 +87,17 @@ $(document).ready(function () {
 		$("#chessfield-content").html(htmlout);
 	}
 
+	//stateMessage
 	function setStateMessage(msg, important) {
 		const stateOutput = $("#state-output");
 		stateOutput.removeClass().addClass(important ? 'state-output-important' : 'state-output-normal');
 		stateOutput.html(msg);
 	}
+
+	//settings
+	$("#new-game").click(function () {
+		socket.emit('newGame');
+	});
 });
 
 function createEmptyField() {

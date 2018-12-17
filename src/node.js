@@ -165,6 +165,10 @@ io.on('connection', function (socket) {
 			});
 		});
 	}
+
+	socket.on('newGame', function () {
+		request(`${serverUrl}/admin/neuesSpiel/${id}`);
+	})
 });
 
 const figuresMap = {
