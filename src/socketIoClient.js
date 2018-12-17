@@ -5,7 +5,11 @@ $(document).ready(function () {
 	var currLayoutId = -1;
 
 	//init pre-socket.io
-	drawChessfield(createEmptyField());
+	setLayoutList([{
+		notation: "connecting...",
+		state: "connecting...",
+		field: createEmptyField()
+	}]);
 
 	//socket.io connection
 	const socket = io.connect();
