@@ -3,8 +3,10 @@ $(document).ready(function () {
 	//state
 	var layoutList = [];
 	var currLayoutId = -1;
+	var currColor;
 
 	//init pre-socket.io
+	setColor(ColorEnum.both);
 	setLayoutList([{
 		notation: "connecting...",
 		state: "connecting...",
@@ -98,8 +100,30 @@ $(document).ready(function () {
 	$("#new-game").click(function () {
 		socket.emit('newGame');
 	});
+	$("#setting-color-white").click(function () {
+		setColor(ColorEnum.white);
+	});
+	$("#setting-color-black").click(function () {
+		setColor(ColorEnum.black);
+	});
+	$("#setting-color-both").click(function () {
+		setColor(ColorEnum.both);
+	});
+	
+	function setColor(newColor) {
+		currColor = newColor;
+		$("#setting-color-white").removeClass().addClass(newColor === ColorEnum.white ? "setting-color-selected" : "setting-color-unselected");
+		$("#setting-color-black").removeClass().addClass(newColor === ColorEnum.black ? "setting-color-selected" : "setting-color-unselected");
+		$("#setting-color-both").removeClass().addClass(newColor === ColorEnum.both ? "setting-color-selected" : "setting-color-unselected");
+	}
 });
 
 function createEmptyField() {
 	return Array.from(Array(8), () => new Array(8));
 }
+
+const ColorEnum = {
+	white: "white",
+	black: "black",
+	both: "both"
+};

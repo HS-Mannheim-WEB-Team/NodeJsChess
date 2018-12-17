@@ -39,7 +39,11 @@
     background-color: burlywood;
 }
 
-[id*=setting-color] {
+.setting-color-selected {
+    background-color: white;
+}
+
+.setting-color-unselected {
     background-color: burlywood;
 }
 
