@@ -1,3 +1,6 @@
+//config
+const serverUrl = "http://www.game-engineering.de:8080/rest/schach/spiel";
+
 //Imports
 const http = require('http').createServer(handlehttp);
 const io = require('socket.io')(http);
@@ -102,7 +105,7 @@ io.on('connection', function (socket) {
 
 	function update() {
 		Promise.all([
-			request('http://www.game-engineering.de:8080/rest/schach/spiel/getSpielDaten/' + id)
+			request(`${serverUrl}/getSpielDaten/${id}`)
 				.then(function (body) {
 					let layoutCnt;
 					forEachXmlProperty(body, function (property) {
@@ -114,7 +117,7 @@ io.on('connection', function (socket) {
 					});
 					return layoutCnt;
 				}),
-			request('http://www.game-engineering.de:8080/rest/schach/spiel/getZugHistorie/' + id)
+			request(`${serverUrl}/getZugHistorie/${id}`)
 				.then(function (body) {
 					let notationList = ['initial'];
 					forEachXmlProperty(body, function (property) {
@@ -131,7 +134,7 @@ io.on('connection', function (socket) {
 
 			let layoutListPromise = [];
 			for (let i = 0; i <= layoutCnt; i++) {
-				layoutListPromise[i] = request(`http://www.game-engineering.de:8080/rest/schach/spiel/getBelegung/${id}/${i}`)
+				layoutListPromise[i] = request(`${serverUrl}/getBelegung/${id}/${i}`)
 					.then(function (body) {
 						let field = createEmptyField();
 						forEachXmlProperty(body, function (property) {
