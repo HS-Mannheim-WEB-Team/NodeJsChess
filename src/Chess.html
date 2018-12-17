@@ -15,10 +15,20 @@
 </head>
 <body>
 
-<h1>NodeJs Chess</h1>
-
 <table id="mainTable">
     <tbody>
+    <tr>
+        <td colspan="2">
+            <div id="title">NodeJs Chess</div>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2">
+            <div id="stateOutput">Connecting...</div>
+        </td>
+    </tr>
+
     <tr>
         <td>
             <div id="chessfieldContainer">
@@ -27,7 +37,8 @@
                 </table>
             </div>
         </td>
-        <td>
+
+        <td rowspan="2">
             <div id="layoutListContainer">
                 <table id="layoutListTable">
                     <tbody id="layoutListContent"></tbody>
@@ -35,16 +46,20 @@
             </div>
         </td>
     </tr>
+
+    <tr>
+        <td>
+            <div id="credits">
+                Credits: <br>
+                Jonas Höfler<br>
+                Sebastian Sydow<br>
+                Melih Ekincioglu<br>
+                Aygün Selvi<br>
+            </div>
+        </td>
+    </tr>
     </tbody>
 </table>
-
-<p id="credits">
-    Credits: <br>
-    Jonas Höfler<br>
-    Sebastian Sydow<br>
-    Melih Ekincioglu<br>
-    Aygün Selvi<br>
-</p>
 
 </body>
 </html>

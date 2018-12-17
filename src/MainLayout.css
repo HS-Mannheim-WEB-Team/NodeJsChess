@@ -1,9 +1,28 @@
+#title {
+    text-align: center;
+    font-size: 48px;
+    background-color: antiquewhite;
+}
+
+#stateOutput {
+    text-align: center;
+    font-size: 24px;
+    background-color: burlywood;
+}
+
 #mainTable > tbody {
     vertical-align: top;
+    max-height: 100%;
 }
 
 #layoutListContainer {
     table-layout: fixed;
-    max-height: 542px;
+    max-height: 650px;
     overflow-y: scroll;
+}
+
+#credits {
+    text-align: center;
+    font-size: 16px;
+    background-color: antiquewhite;
 }
