@@ -3,9 +3,27 @@ $(document).ready(function () {
 	//state
 	var layoutList = [];
 	var currLayoutId = -1;
-
+	var clickedfield = "oo";
+	var gPossibleMoves;
 	//init pre-socket.io
 	drawChessfield(createEmptyField());
+
+	//clicked fields
+
+
+	function saveClickedField(y, x) {
+		clickedfield = y.toString() + x.toString();
+		console.log(clickedfield)
+	}
+
+	function savePossibleMoves(Moves){
+		gPossibleMoves=Moves;
+	}
+
+	function numberToLetter(number){
+		letters = [{0:'a',1:'b',2:'c',3:'d',4:'e',5:'f',6:'g',7:'h'}]
+		return letters[parseInt(number)]
+	}
 
 	//socket.io connection
 	const socket = io.connect();
@@ -75,7 +93,9 @@ $(document).ready(function () {
 		for (let y = 0; y < 8; y++) {
 			for (let x = 0; x < 8; x++) {
 				$(`#field-id-${y}-${x}`).click(function (event) {
+
 					onChessfieldClick(y, x);
+
 				});
 			}
 		}
@@ -83,22 +103,38 @@ $(document).ready(function () {
 
 	//move
 	function onChessfieldClick(y, x) {
-		socket.emit('possibleMoveRequest', y, x);
+		console.log(gPossibleMoves)
+		if(gPossibleMoves === undefined){
+			saveClickedField(y, x);
+			socket.emit('possibleMoveRequest', y, x);
+		}
+		if (gPossibleMoves[y][x]=== 'field-marked') {
+			von = numberToLetter(clickedfield[0])+clickedfield[1]
+			nach = numberToLetter(y)+y.toString()
+			console.log(von, nach)
+			socket.emit('makeMoveRequest',von,nach);
+
+		} else {
+			saveClickedField(y, x);
+			socket.emit('possibleMoveRequest', y, x);
+		}
 	}
 
 	socket.on('possibleMoveResponse', function (possibleMoves) {
 		if (layoutList.length - 1 !== currLayoutId) {
 			return;
 		}
+		console.log(possibleMoves)
+		savePossibleMoves(possibleMoves);
 
 		let layout = layoutList[layoutList.length - 1];
 		let draw = createEmptyField();
-		let marked = createEmptyField();
+
 
 		for (let y = 0; y < 8; y++) {
 			for (let x = 0; x < 8; x++) {
 				draw[y][x] = `${layout.field[y][x]} ${possibleMoves[y][x]}`.trim();
-				
+
 			}
 		}
 		drawChessfield(draw);

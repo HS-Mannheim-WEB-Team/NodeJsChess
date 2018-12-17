@@ -91,7 +91,7 @@ io.on('connection', function (socket) {
 	console.log('a user connected');
 
 	//state
-	const id = 0;
+	const id = 15;
 	let prevLayoutCount = -1;
 
 	//update query
@@ -186,8 +186,8 @@ io.on('connection', function (socket) {
 
 	//makemove
 
-	socket.on('makeMoveRequest', function(y,x){
-		request(`http://www.game-engineering.de:8080/rest/schach/spiel/ziehe/${id}/${String.fromCodePoint(x + 'a'.codePointAt(0))}${String.fromCodePoint(y +'1'.codePointAt(0))}`)
+	socket.on('makeMoveRequest', function(von,nach){
+		request(`http://www.game-engineering.de:8080/rest/schach/spiel/ziehe/${id}/${von}/${nach}`)
 	})
 });
 
