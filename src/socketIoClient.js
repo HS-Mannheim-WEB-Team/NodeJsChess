@@ -93,10 +93,12 @@ $(document).ready(function () {
 
 		let layout = layoutList[layoutList.length - 1];
 		let draw = createEmptyField();
+		let marked = createEmptyField();
 
 		for (let y = 0; y < 8; y++) {
 			for (let x = 0; x < 8; x++) {
 				draw[y][x] = `${layout.field[y][x]} ${possibleMoves[y][x]}`.trim();
+				
 			}
 		}
 		drawChessfield(draw);

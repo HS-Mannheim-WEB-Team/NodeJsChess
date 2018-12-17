@@ -183,6 +183,12 @@ io.on('connection', function (socket) {
 				socket.emit('possibleMoveResponse', field);
 			});
 	});
+
+	//makemove
+
+	socket.on('makeMoveRequest', function(y,x){
+		request(`http://www.game-engineering.de:8080/rest/schach/spiel/ziehe/${id}/${String.fromCodePoint(x + 'a'.codePointAt(0))}${String.fromCodePoint(y +'1'.codePointAt(0))}`)
+	})
 });
 
 const figuresMap = {
