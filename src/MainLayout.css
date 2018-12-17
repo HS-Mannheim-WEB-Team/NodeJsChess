@@ -7,7 +7,14 @@
 #stateOutput {
     text-align: center;
     font-size: 24px;
+}
+
+.stateOutputImportant {
     background-color: burlywood;
+}
+
+.stateOutputNormal {
+    background-color: antiquewhite;
 }
 
 #mainTable > tbody {

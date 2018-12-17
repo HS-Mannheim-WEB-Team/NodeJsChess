@@ -11,9 +11,11 @@ $(document).ready(function () {
 	const socket = io.connect();
 	socket.on('connect', function () {
 		console.log("client: connected");
+		setStateMessage("connected!", true);
 	});
 	socket.on('disconnect', function () {
 		console.log("client: disconnected");
+		setStateMessage("disconnected!", true);
 	});
 
 	//layout list
@@ -24,8 +26,6 @@ $(document).ready(function () {
 	function setLayoutList(newLayoutList) {
 		updateChessfield = layoutList.length - 1 === currLayoutId;
 		layoutList = newLayoutList;
-		if (updateChessfield)
-			setChessfield(layoutList.length - 1);
 
 		//generate html table
 		let htmlout = "\n";
@@ -42,12 +42,22 @@ $(document).ready(function () {
 				setChessfield(i);
 			});
 		}
+
+		if (updateChessfield)
+			setChessfield(layoutList.length - 1);
 	}
 
 	//chessfield
 	function setChessfield(layoutId) {
 		currLayoutId = layoutId;
-		drawChessfield(layoutList[layoutId].field);
+		const layout = layoutList[layoutId];
+		drawChessfield(layout.field);
+
+		if (layout.state === undefined) {
+			setStateMessage("Game running", false);
+		} else {
+			setStateMessage(layout.state, true);
+		}
 	}
 
 	function drawChessfield(cssClassChessField) {
@@ -71,6 +81,12 @@ $(document).ready(function () {
 			htmlout += "</tr>\n";
 		}
 		$("#chessfieldContent").html(htmlout);
+	}
+
+	function setStateMessage(msg, important) {
+		const stateOutput = $("#stateOutput");
+		stateOutput.removeClass().addClass(important ? 'stateOutputImportant' : 'stateOutputNormal');
+		stateOutput.html(msg);
 	}
 });
 
