@@ -3,7 +3,7 @@ $(document).ready(function () {
 	//state
 	var layoutList = [];
 	var currLayoutId = -1;
-	var clickedfield = "oo";
+	var clickedfield
 	var gPossibleMoves;
 	//init pre-socket.io
 	drawChessfield(createEmptyField());
@@ -21,8 +21,9 @@ $(document).ready(function () {
 	}
 
 	function numberToLetter(number){
-		letters = [{0:'a',1:'b',2:'c',3:'d',4:'e',5:'f',6:'g',7:'h'}]
-		return letters[parseInt(number)]
+		letters = "abcdefgh"
+
+		return letters.charAt(number)
 	}
 
 	//socket.io connection
@@ -103,15 +104,15 @@ $(document).ready(function () {
 
 	//move
 	function onChessfieldClick(y, x) {
-		console.log(gPossibleMoves)
+		console.log("clicked: ",y,x)
 		if(gPossibleMoves === undefined){
 			saveClickedField(y, x);
 			socket.emit('possibleMoveRequest', y, x);
 		}
-		if (gPossibleMoves[y][x]=== 'field-marked') {
-			von = numberToLetter(clickedfield[0])+clickedfield[1]
-			nach = numberToLetter(y)+y.toString()
-			console.log(von, nach)
+		else if (gPossibleMoves[y][x]=== 'field-marked') {
+			von =(parseInt(clickedfield.charAt(0))+1).toString()+ numberToLetter(clickedfield.charAt(1))
+			nach =(parseInt(y)+1).toString()+ numberToLetter(x)
+			console.log(von, nach,clickedfield)
 			socket.emit('makeMoveRequest',von,nach);
 
 		} else {
