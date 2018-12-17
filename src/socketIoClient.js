@@ -34,7 +34,7 @@ $(document).ready(function () {
 			const fieldColor = i % 2 === 0 ? "layout-list-white" : "layout-list-black";
 			htmlout += `<tr><td id="layoutList-${i}" class="${fieldColor}">${layout.notation}</td></tr>\n`
 		}
-		$("#layoutListContent").html(htmlout);
+		$("#layout-list-content").html(htmlout);
 
 		//attach click listener
 		for (let i = 0; i < newLayoutList.length; i++) {
@@ -80,12 +80,12 @@ $(document).ready(function () {
 			}
 			htmlout += "</tr>\n";
 		}
-		$("#chessfieldContent").html(htmlout);
+		$("#chessfield-content").html(htmlout);
 	}
 
 	function setStateMessage(msg, important) {
-		const stateOutput = $("#stateOutput");
-		stateOutput.removeClass().addClass(important ? 'stateOutputImportant' : 'stateOutputNormal');
+		const stateOutput = $("#state-output");
+		stateOutput.removeClass().addClass(important ? 'state-output-important' : 'state-output-normal');
 		stateOutput.html(msg);
 	}
 });

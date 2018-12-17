@@ -4,25 +4,25 @@
     background-color: antiquewhite;
 }
 
-#stateOutput {
+#state-output {
     text-align: center;
     font-size: 24px;
 }
 
-.stateOutputImportant {
+.state-output-important {
     background-color: burlywood;
 }
 
-.stateOutputNormal {
+.state-output-normal {
     background-color: antiquewhite;
 }
 
-#mainTable > tbody {
+#main-table > tbody {
     vertical-align: top;
     max-height: 100%;
 }
 
-#layoutListContainer {
+#layout-list-container {
     table-layout: fixed;
     max-height: 650px;
     overflow-y: scroll;
@@ -34,12 +34,12 @@
     font-size: 16px;
 }
 
-#newGame {
+#new-game {
     display: inline-block;
     background-color: burlywood;
 }
 
-[id*=settingColor] {
+[id*=setting-color] {
     background-color: burlywood;
 }
 
