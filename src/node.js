@@ -187,8 +187,9 @@ io.on('connection', function (socket) {
 	//makemove
 
 	socket.on('makeMoveRequest', function(von,nach){
-		request(`http://www.game-engineering.de:8080/rest/schach/spiel/ziehe/${id}/${von}/${nach}`,function () {
-			
+		console.log(`http://www.game-engineering.de:8080/rest/schach/spiel/ziehe/${id}/${von}/${nach}`)
+		request(`http://www.game-engineering.de:8080/rest/schach/spiel/ziehe/${id}/${von}/${nach}`,function (body) {
+			console.log(body)
 		})
 	})
 });

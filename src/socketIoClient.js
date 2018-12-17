@@ -110,8 +110,8 @@ $(document).ready(function () {
 			socket.emit('possibleMoveRequest', y, x);
 		}
 		else if (gPossibleMoves[y][x]=== 'field-marked') {
-			von =(parseInt(clickedfield.charAt(0))+1).toString()+ numberToLetter(clickedfield.charAt(1))
-			nach =(parseInt(y)+1).toString()+ numberToLetter(x)
+			von = numberToLetter(clickedfield.charAt(1))+(parseInt(clickedfield.charAt(0))+1).toString()     //(parseInt(clickedfield.charAt(0))+1)
+			nach =numberToLetter(x)+(y+1).toString() 										//parseInt(y)+1).toString()
 			console.log(von, nach,clickedfield)
 			socket.emit('makeMoveRequest',von,nach);
 
