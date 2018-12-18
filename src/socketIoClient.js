@@ -12,7 +12,6 @@ $(document).ready(function () {
 	//clicked fields
 	function saveClickedField(y, x) {
 		clickedfield = y.toString() + x.toString();
-		console.log(clickedfield)
 	}
 
 	function savePossibleMoves(Moves) {
@@ -107,7 +106,6 @@ $(document).ready(function () {
 		} else if (gPossibleMoves[y][x] === 'field-marked') {
 			von = numberToLetter(clickedfield.charAt(1)) + (parseInt(clickedfield.charAt(0)) + 1).toString();
 			nach = numberToLetter(x) + (y + 1).toString();
-			console.log(von, nach, clickedfield);
 			socket.emit('makeMoveRequest', von, nach);
 		} else {
 			saveClickedField(y, x);
@@ -119,7 +117,6 @@ $(document).ready(function () {
 		if (layoutList.length - 1 !== currLayoutId) {
 			return;
 		}
-		console.log(possibleMoves);
 		savePossibleMoves(possibleMoves);
 
 		let layout = layoutList[layoutList.length - 1];
