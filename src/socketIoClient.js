@@ -3,26 +3,24 @@ $(document).ready(function () {
 	//state
 	var layoutList = [];
 	var currLayoutId = -1;
-	var clickedfield
+	var clickedfield;
 	var gPossibleMoves;
+
 	//init pre-socket.io
 	drawChessfield(createEmptyField());
 
 	//clicked fields
-
-
 	function saveClickedField(y, x) {
 		clickedfield = y.toString() + x.toString();
 		console.log(clickedfield)
 	}
 
-	function savePossibleMoves(Moves){
-		gPossibleMoves=Moves;
+	function savePossibleMoves(Moves) {
+		gPossibleMoves = Moves;
 	}
 
-	function numberToLetter(number){
-		letters = "abcdefgh"
-
+	function numberToLetter(number) {
+		letters = "abcdefgh";
 		return letters.charAt(number)
 	}
 
@@ -94,9 +92,7 @@ $(document).ready(function () {
 		for (let y = 0; y < 8; y++) {
 			for (let x = 0; x < 8; x++) {
 				$(`#field-id-${y}-${x}`).click(function (event) {
-
 					onChessfieldClick(y, x);
-
 				});
 			}
 		}
@@ -104,17 +100,15 @@ $(document).ready(function () {
 
 	//move
 	function onChessfieldClick(y, x) {
-		console.log("clicked: ",y,x)
-		if(gPossibleMoves === undefined){
+		console.log("clicked: ", y, x);
+		if (gPossibleMoves === undefined) {
 			saveClickedField(y, x);
 			socket.emit('possibleMoveRequest', y, x);
-		}
-		else if (gPossibleMoves[y][x]=== 'field-marked') {
-			von = numberToLetter(clickedfield.charAt(1))+(parseInt(clickedfield.charAt(0))+1).toString()     //(parseInt(clickedfield.charAt(0))+1)
-			nach =numberToLetter(x)+(y+1).toString() 										//parseInt(y)+1).toString()
-			console.log(von, nach,clickedfield)
-			socket.emit('makeMoveRequest',von,nach);
-
+		} else if (gPossibleMoves[y][x] === 'field-marked') {
+			von = numberToLetter(clickedfield.charAt(1)) + (parseInt(clickedfield.charAt(0)) + 1).toString();
+			nach = numberToLetter(x) + (y + 1).toString();
+			console.log(von, nach, clickedfield);
+			socket.emit('makeMoveRequest', von, nach);
 		} else {
 			saveClickedField(y, x);
 			socket.emit('possibleMoveRequest', y, x);
@@ -125,17 +119,14 @@ $(document).ready(function () {
 		if (layoutList.length - 1 !== currLayoutId) {
 			return;
 		}
-		console.log(possibleMoves)
+		console.log(possibleMoves);
 		savePossibleMoves(possibleMoves);
 
 		let layout = layoutList[layoutList.length - 1];
 		let draw = createEmptyField();
-
-
 		for (let y = 0; y < 8; y++) {
 			for (let x = 0; x < 8; x++) {
 				draw[y][x] = `${layout.field[y][x]} ${possibleMoves[y][x]}`.trim();
-
 			}
 		}
 		drawChessfield(draw);

@@ -166,7 +166,7 @@ io.on('connection', function (socket) {
 		});
 	}
 
-	//possibleMoves
+	//move
 	socket.on('possibleMoveRequest', function (y, x) {
 		request(`http://www.game-engineering.de:8080/rest/schach/spiel/getErlaubteZuege/${id}/${String.fromCodePoint(x + 'a'.codePointAt(0))}${String.fromCodePoint(y + '1'.codePointAt(0))}`)
 			.then(function (body) {
@@ -183,8 +183,6 @@ io.on('connection', function (socket) {
 				socket.emit('possibleMoveResponse', field);
 			});
 	});
-
-	//makemove
 
 	socket.on('makeMoveRequest', function (von, nach) {
 		const url = `http://www.game-engineering.de:8080/rest/schach/spiel/ziehe/${id}/${von}/${nach}`;
