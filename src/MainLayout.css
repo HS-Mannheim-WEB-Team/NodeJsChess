@@ -37,7 +37,7 @@
 
 #layout-list-container {
     table-layout: fixed;
-    max-height: 650px;
+    max-height: 700px;
     overflow-y: scroll;
 }
 
