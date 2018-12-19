@@ -3,25 +3,10 @@ $(document).ready(function () {
 	//state
 	var layoutList = [];
 	var currLayoutId = -1;
-	var clickedfield;
-	var gPossibleMoves;
+	var clickedField;
 
 	//init pre-socket.io
 	drawChessfield(createEmptyField());
-
-	//clicked fields
-	function saveClickedField(y, x) {
-		clickedfield = y.toString() + x.toString();
-	}
-
-	function savePossibleMoves(Moves) {
-		gPossibleMoves = Moves;
-	}
-
-	function numberToLetter(number) {
-		letters = "abcdefgh";
-		return letters.charAt(number)
-	}
 
 	//socket.io connection
 	const socket = io.connect();
@@ -100,16 +85,18 @@ $(document).ready(function () {
 	//move
 	function onChessfieldClick(y, x) {
 		console.log("clicked: ", y, x);
-		if (gPossibleMoves === undefined) {
-			saveClickedField(y, x);
+		if (clickedField === undefined) {
+			clickedField = {
+				y: y,
+				x: x
+			};
 			socket.emit('possibleMoveRequest', y, x);
-		} else if (gPossibleMoves[y][x] === 'field-marked') {
-			von = numberToLetter(clickedfield.charAt(1)) + (parseInt(clickedfield.charAt(0)) + 1).toString();
-			nach = numberToLetter(x) + (y + 1).toString();
-			socket.emit('makeMoveRequest', von, nach);
 		} else {
-			saveClickedField(y, x);
-			socket.emit('possibleMoveRequest', y, x);
+			if (!(clickedField.y === y && clickedField.x === x)) {
+				socket.emit('makeMoveRequest', clickedField.y, clickedField.x, y, x);
+			}
+			clickedField = undefined;
+			drawChessfield(layoutList[currLayoutId].field);
 		}
 	}
 
@@ -117,7 +104,6 @@ $(document).ready(function () {
 		if (layoutList.length - 1 !== currLayoutId) {
 			return;
 		}
-		savePossibleMoves(possibleMoves);
 
 		let layout = layoutList[layoutList.length - 1];
 		let draw = createEmptyField();

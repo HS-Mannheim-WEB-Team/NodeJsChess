@@ -184,7 +184,9 @@ io.on('connection', function (socket) {
 			});
 	});
 
-	socket.on('makeMoveRequest', function (von, nach) {
+	socket.on('makeMoveRequest', function (fromY, fromX, toY, toX) {
+		von = String.fromCodePoint(fromX + 'a'.codePointAt(0)) + String.fromCodePoint(fromY + '1'.codePointAt(0));
+		nach = String.fromCodePoint(toX + 'a'.codePointAt(0)) + String.fromCodePoint(toY + '1'.codePointAt(0));
 		request(`http://www.game-engineering.de:8080/rest/schach/spiel/ziehe/${id}/${von}/${nach}`);
 	})
 });
