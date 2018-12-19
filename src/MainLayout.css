@@ -14,7 +14,7 @@
 }
 
 .state-output-important {
-    background-color: burlywood;
+    background-color: gold;
 }
 
 #state-color {
@@ -52,12 +52,20 @@
     background-color: burlywood;
 }
 
+#new-game:hover {
+    background-color: gold;
+}
+
 .setting-color-selected {
     background-color: white;
 }
 
 .setting-color-unselected {
     background-color: burlywood;
+}
+
+[id*=setting-color]:hover {
+    background-color: gold;
 }
 
 #credits {
