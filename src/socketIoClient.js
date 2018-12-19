@@ -44,7 +44,7 @@ $(document).ready(function () {
 
 		//attach click listener
 		for (let i = 0; i < newLayoutList.length; i++) {
-			$(`#layoutList-${i}`).click(function (event) {
+			$(`#layoutList-${i}`).click(function () {
 				setChessfield(i);
 			});
 		}
@@ -64,6 +64,7 @@ $(document).ready(function () {
 		} else {
 			setStateMessage(layout.state, true);
 		}
+		setStateColor(layoutId % 2 === 0 ? ColorEnum.white : ColorEnum.black);
 	}
 
 	function drawChessfield(cssClassChessField) {
@@ -94,6 +95,17 @@ $(document).ready(function () {
 		const stateOutput = $("#state-output");
 		stateOutput.removeClass().addClass(important ? 'state-output-important' : 'state-output-normal');
 		stateOutput.html(msg);
+	}
+
+	function setStateColor(color) {
+		const stateColor = $("#state-color").removeClass();
+		if (color === ColorEnum.white) {
+			stateColor.addClass("state-color-white").html("White's turn");
+		} else if (color === ColorEnum.black) {
+			stateColor.addClass("state-color-black").html("Black's turn");
+		} else {
+			throw new Error("Invalid color!");
+		}
 	}
 
 	//settings

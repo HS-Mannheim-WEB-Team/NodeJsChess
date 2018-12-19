@@ -9,12 +9,25 @@
     font-size: 24px;
 }
 
+.state-output-normal {
+    background-color: antiquewhite;
+}
+
 .state-output-important {
     background-color: burlywood;
 }
 
-.state-output-normal {
+#state-color {
+    text-align: center;
+    font-size: 24px;
+}
+
+.state-color-white {
     background-color: antiquewhite;
+}
+
+.state-color-black {
+    background-color: burlywood;
 }
 
 #main-table > tbody {
