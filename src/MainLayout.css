@@ -1,9 +1,75 @@
-#mainTable > tbody {
-    vertical-align: top;
+#title {
+    text-align: center;
+    font-size: 48px;
+    background-color: antiquewhite;
 }
 
-#layoutListContainer {
+#state-output {
+    text-align: center;
+    font-size: 24px;
+}
+
+.state-output-normal {
+    background-color: antiquewhite;
+}
+
+.state-output-important {
+    background-color: gold;
+}
+
+#state-color {
+    text-align: center;
+    font-size: 24px;
+}
+
+.state-color-white {
+    background-color: antiquewhite;
+}
+
+.state-color-black {
+    background-color: burlywood;
+}
+
+#main-table > tbody {
+    vertical-align: top;
+    max-height: 100%;
+}
+
+#layout-list-container {
     table-layout: fixed;
-    max-height: 542px;
+    max-height: 650px;
     overflow-y: scroll;
+}
+
+#settings {
+    background-color: antiquewhite;
+    text-align: left;
+    font-size: 16px;
+}
+
+#new-game {
+    display: inline-block;
+    background-color: burlywood;
+}
+
+#new-game:hover {
+    background-color: gold;
+}
+
+.setting-color-selected {
+    background-color: white;
+}
+
+.setting-color-unselected {
+    background-color: burlywood;
+}
+
+[id*=setting-color]:hover {
+    background-color: gold;
+}
+
+#credits {
+    text-align: left;
+    font-size: 16px;
+    background-color: antiquewhite;
 }

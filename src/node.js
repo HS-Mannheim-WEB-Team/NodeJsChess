@@ -137,20 +137,24 @@ io.on('connection', function (socket) {
 				layoutListPromise[i] = request(`${serverUrl}/getBelegung/${id}/${i}`)
 					.then(function (body) {
 						let field = createEmptyField();
+						let state;
+
 						forEachXmlProperty(body, function (property) {
-							if (property.klasse !== "D_Figur") {
-								return;
-							}
+							if (property.klasse === "D_Figur") {
+								if (property.position) {
+									const x = property.position.codePointAt(0) - 'a'.codePointAt(0);
+									const y = property.position.codePointAt(1) - '1'.codePointAt(0);
 
-							if (property.position) {
-								const x = property.position.codePointAt(0) - 'a'.codePointAt(0);
-								const y = property.position.codePointAt(1) - '1'.codePointAt(0);
-
-								field[y][x] = `figure-${figuresMap[property.typ]}-${property.isWeiss === 'true' ? "white" : "black"}`;
+									field[y][x] = `figure-${figuresMap[property.typ]}-${property.isWeiss === 'true' ? "white" : "black"}`;
+								}
+							} else if (property.klasse === "D_Belegung") {
+								state = stateMap[property.status];
 							}
 						});
+
 						return {
 							notation: `${i}: ${notationList[i]}`,
+							state: state,
 							field: field
 						};
 					});
@@ -161,6 +165,10 @@ io.on('connection', function (socket) {
 			});
 		});
 	}
+
+	socket.on('newGame', function () {
+		request(`${serverUrl}/admin/neuesSpiel/${id}`);
+	})
 });
 
 const figuresMap = {
@@ -170,4 +178,12 @@ const figuresMap = {
 	"Dame": "queen",
 	"Koenig": "king",
 	"Bauer": "pawn"
+};
+
+const stateMap = {
+	"WeissImSchach": "White is in check!",
+	"SchwarzImSchach": "Black is in check!",
+	"WeissSchachMatt": "Game ended: White is in checkmate!",
+	"SchwarzSchachMatt": "Game ended: Black is in checkmate!",
+	"Patt": "Game ended: Game in a Stalemate!"
 };

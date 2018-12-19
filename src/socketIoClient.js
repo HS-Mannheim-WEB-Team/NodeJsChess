@@ -3,17 +3,25 @@ $(document).ready(function () {
 	//state
 	var layoutList = [];
 	var currLayoutId = -1;
+	var currColor;
 
 	//init pre-socket.io
-	drawChessfield(createEmptyField());
+	setColor(ColorEnum.both);
+	setLayoutList([{
+		notation: "connecting...",
+		state: "connecting...",
+		field: createEmptyField()
+	}]);
 
 	//socket.io connection
 	const socket = io.connect();
 	socket.on('connect', function () {
 		console.log("client: connected");
+		setStateMessage("connected!", true);
 	});
 	socket.on('disconnect', function () {
 		console.log("client: disconnected");
+		setStateMessage("disconnected!", true);
 	});
 
 	//layout list
@@ -24,8 +32,6 @@ $(document).ready(function () {
 	function setLayoutList(newLayoutList) {
 		updateChessfield = layoutList.length - 1 === currLayoutId;
 		layoutList = newLayoutList;
-		if (updateChessfield)
-			setChessfield(layoutList.length - 1);
 
 		//generate html table
 		let htmlout = "\n";
@@ -34,20 +40,31 @@ $(document).ready(function () {
 			const fieldColor = i % 2 === 0 ? "layout-list-white" : "layout-list-black";
 			htmlout += `<tr><td id="layoutList-${i}" class="${fieldColor}">${layout.notation}</td></tr>\n`
 		}
-		$("#layoutListContent").html(htmlout);
+		$("#layout-list-content").html(htmlout);
 
 		//attach click listener
 		for (let i = 0; i < newLayoutList.length; i++) {
-			$(`#layoutList-${i}`).click(function (event) {
+			$(`#layoutList-${i}`).click(function () {
 				setChessfield(i);
 			});
 		}
+
+		if (updateChessfield)
+			setChessfield(layoutList.length - 1);
 	}
 
 	//chessfield
 	function setChessfield(layoutId) {
 		currLayoutId = layoutId;
-		drawChessfield(layoutList[layoutId].field);
+		const layout = layoutList[layoutId];
+		drawChessfield(layout.field);
+
+		if (layout.state === undefined) {
+			setStateMessage("Game running", false);
+		} else {
+			setStateMessage(layout.state, true);
+		}
+		setStateColor(layoutId % 2 === 0 ? ColorEnum.white : ColorEnum.black);
 	}
 
 	function drawChessfield(cssClassChessField) {
@@ -70,10 +87,55 @@ $(document).ready(function () {
 			}
 			htmlout += "</tr>\n";
 		}
-		$("#chessfieldContent").html(htmlout);
+		$("#chessfield-content").html(htmlout);
+	}
+
+	//stateMessage
+	function setStateMessage(msg, important) {
+		const stateOutput = $("#state-output");
+		stateOutput.removeClass().addClass(important ? 'state-output-important' : 'state-output-normal');
+		stateOutput.html(msg);
+	}
+
+	function setStateColor(color) {
+		const stateColor = $("#state-color").removeClass();
+		if (color === ColorEnum.white) {
+			stateColor.addClass("state-color-white").html("White's turn");
+		} else if (color === ColorEnum.black) {
+			stateColor.addClass("state-color-black").html("Black's turn");
+		} else {
+			throw new Error("Invalid color!");
+		}
+	}
+
+	//settings
+	$("#new-game").click(function () {
+		socket.emit('newGame');
+	});
+	$("#setting-color-white").click(function () {
+		setColor(ColorEnum.white);
+	});
+	$("#setting-color-black").click(function () {
+		setColor(ColorEnum.black);
+	});
+	$("#setting-color-both").click(function () {
+		setColor(ColorEnum.both);
+	});
+	
+	function setColor(newColor) {
+		currColor = newColor;
+		$("#setting-color-white").removeClass().addClass(newColor === ColorEnum.white ? "setting-color-selected" : "setting-color-unselected");
+		$("#setting-color-black").removeClass().addClass(newColor === ColorEnum.black ? "setting-color-selected" : "setting-color-unselected");
+		$("#setting-color-both").removeClass().addClass(newColor === ColorEnum.both ? "setting-color-selected" : "setting-color-unselected");
 	}
 });
 
 function createEmptyField() {
 	return Array.from(Array(8), () => new Array(8));
 }
+
+const ColorEnum = {
+	white: "white",
+	black: "black",
+	both: "both"
+};
