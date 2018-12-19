@@ -15,3 +15,7 @@
 .layout-list-white {
     background-color: burlywood;
 }
+
+.layout-list-selected {
+    background-color: gold;
+}
