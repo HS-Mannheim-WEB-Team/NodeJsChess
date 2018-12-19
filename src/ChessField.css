@@ -1,6 +1,9 @@
 [class*=field] {
     width: 50px;
     height: 50px;
+    border-width: 3px;
+    border-style: solid;
+    border-color: transparent;
 }
 
 .field-black {
@@ -14,6 +17,11 @@
 .field-border {
     text-align: center;
     font-size: 36px;
+}
+
+.field-marked {
+    border-style: solid;
+    border-color: green;
 }
 
 .field-inner:hover {

@@ -4,6 +4,7 @@ $(document).ready(function () {
 	var layoutList = [];
 	var currLayoutId = -1;
 	var currColor;
+	var clickedField;
 
 	//init pre-socket.io
 	setColor(ColorEnum.both);
@@ -88,6 +89,14 @@ $(document).ready(function () {
 			htmlout += "</tr>\n";
 		}
 		$("#chessfield-content").html(htmlout);
+
+		for (let y = 0; y < 8; y++) {
+			for (let x = 0; x < 8; x++) {
+				$(`#field-id-${y}-${x}`).click(function (event) {
+					onChessfieldClick(y, x);
+				});
+			}
+		}
 	}
 
 	//stateMessage
@@ -121,13 +130,46 @@ $(document).ready(function () {
 	$("#setting-color-both").click(function () {
 		setColor(ColorEnum.both);
 	});
-	
+
 	function setColor(newColor) {
 		currColor = newColor;
 		$("#setting-color-white").removeClass().addClass(newColor === ColorEnum.white ? "setting-color-selected" : "setting-color-unselected");
 		$("#setting-color-black").removeClass().addClass(newColor === ColorEnum.black ? "setting-color-selected" : "setting-color-unselected");
 		$("#setting-color-both").removeClass().addClass(newColor === ColorEnum.both ? "setting-color-selected" : "setting-color-unselected");
 	}
+
+	//move
+	function onChessfieldClick(y, x) {
+		console.log("clicked: ", y, x);
+		if (clickedField === undefined) {
+			clickedField = {
+				y: y,
+				x: x
+			};
+			socket.emit('possibleMoveRequest', y, x);
+		} else {
+			if (!(clickedField.y === y && clickedField.x === x)) {
+				socket.emit('makeMoveRequest', clickedField.y, clickedField.x, y, x);
+			}
+			clickedField = undefined;
+			drawChessfield(layoutList[currLayoutId].field);
+		}
+	}
+
+	socket.on('possibleMoveResponse', function (possibleMoves) {
+		if (layoutList.length - 1 !== currLayoutId) {
+			return;
+		}
+
+		let layout = layoutList[layoutList.length - 1];
+		let draw = createEmptyField();
+		for (let y = 0; y < 8; y++) {
+			for (let x = 0; x < 8; x++) {
+				draw[y][x] = `${layout.field[y][x]} ${possibleMoves[y][x]}`.trim();
+			}
+		}
+		drawChessfield(draw);
+	});
 });
 
 function createEmptyField() {
