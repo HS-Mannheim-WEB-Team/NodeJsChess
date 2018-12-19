@@ -30,9 +30,13 @@
     background-color: burlywood;
 }
 
+#main-table {
+    margin: auto;
+    max-height: 100%;
+}
+
 #main-table > tbody {
     vertical-align: top;
-    max-height: 100%;
 }
 
 #layout-list-container {
