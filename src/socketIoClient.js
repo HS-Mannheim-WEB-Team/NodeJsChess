@@ -56,9 +56,13 @@ $(document).ready(function () {
 
 	//chessfield
 	function setChessfield(layoutId) {
+		const oldLayoutId = currLayoutId;
 		currLayoutId = layoutId;
 		const layout = layoutList[layoutId];
+
 		drawChessfield(layout.field);
+		$(`#layoutList-${oldLayoutId}`).removeClass("layout-list-selected");
+		$(`#layoutList-${layoutId}`).addClass("layout-list-selected");
 
 		if (layout.state === undefined) {
 			setStateMessage("Game running", false);
