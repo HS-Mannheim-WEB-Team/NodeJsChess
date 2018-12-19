@@ -142,6 +142,10 @@ $(document).ready(function () {
 	//move
 	function onChessfieldClick(y, x) {
 		console.log("clicked: ", y, x);
+		if (layoutList.length - 1 !== currLayoutId) {
+			return;
+		}
+
 		if (clickedField === undefined) {
 			if (currColor === ColorEnum.both || (layoutList[currLayoutId].field[y][x] !== null && layoutList[currLayoutId].field[y][x].includes(currColor))) {
 				clickedField = {
