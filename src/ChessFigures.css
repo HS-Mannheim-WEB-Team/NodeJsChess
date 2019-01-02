@@ -3,11 +3,11 @@
     background-repeat: no-repeat;
 }
 
-.figure-king-white {
+.figure-queen-white {
     background-image: url("/images/king_white.png");
 }
 
-.figure-queen-white {
+.figure-king-white {
     background-image: url("/images/queen_white.png");
 }
 
@@ -27,11 +27,11 @@
     background-image: url("/images/pawn_white.png");
 }
 
-.figure-king-black {
+.figure-queen-black {
     background-image: url("/images/king_black.png");
 }
 
-.figure-queen-black {
+.figure-king-black {
     background-image: url("/images/queen_black.png");
 }
 
