@@ -75,7 +75,7 @@ $(document).ready(function () {
 		function drawChessfield(cssClassChessField) {
 			let htmlout = "\n";
 
-			if (currColor == ColorEnum.black) {
+			if (currColor == ColorEnum.white) {
 				for (let y = 0; y < 10; y++) {
 					htmlout += "<tr>";
 					for (let x = 0; x < 10; x++) {
