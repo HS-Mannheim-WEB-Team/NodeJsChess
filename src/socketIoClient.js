@@ -85,7 +85,7 @@ $(document).ready(function () {
 						if (borderLetter && borderNumber) {
 							htmlout += `<td class="${fieldColor} field-border"/>`;
 						} else if (borderLetter) {
-							htmlout += `<td class="${fieldColor} field-border">${String.fromCharCode('1'.charCodeAt(0) + y - 1)}</td>`;
+							htmlout += `<td class="${fieldColor} field-border">${String.fromCharCode('8'.charCodeAt(0) - y + 1)}</td>`;
 						} else if (borderNumber) {
 							htmlout += `<td class="${fieldColor} field-border">${String.fromCharCode('H'.charCodeAt(0) - x + 1)}</td>`;
 						} else {
@@ -104,7 +104,7 @@ $(document).ready(function () {
 						if (borderLetter && borderNumber) {
 							htmlout += `<td class="${fieldColor} field-border"/>`;
 						} else if (borderLetter) {
-							htmlout += `<td class="${fieldColor} field-border">${String.fromCharCode('8'.charCodeAt(0) - y + 1)}</td>`;
+							htmlout += `<td class="${fieldColor} field-border">${String.fromCharCode('1'.charCodeAt(0) + y - 1)}</td>`;
 						} else if (borderNumber) {
 							htmlout += `<td class="${fieldColor} field-border">${String.fromCharCode('A'.charCodeAt(0) + x - 1)}</td>`;
 						} else {
