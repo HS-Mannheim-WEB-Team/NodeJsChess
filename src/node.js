@@ -1,7 +1,7 @@
 //config
-const serverUrl = "http://www.game-engineering.de:8080/rest/schach/spiel";
+//const serverUrl = "http://www.game-engineering.de:8080/rest/schach/spiel";
 //const serverUrl = "http://games.informatik.hs-mannheim.de:8080/rest/schach/spiel";
-//const serverUrl = "http://localhost:3030/rest/schach/spiel";
+const serverUrl = "http://localhost:3030/rest/schach/spiel";
 
 //Imports
 const http = require('http').createServer(handlehttp);
@@ -121,7 +121,7 @@ io.on('connection', function (socket) {
 						layoutCnt = property.anzahlZuege;
 					});
 					return layoutCnt;
-				}),
+				})/*,
 			request(`${serverUrl}/getZugHistorie/${id}`)
 				.then(function (body) {
 					let notationList = ['initial'];
@@ -132,10 +132,9 @@ io.on('connection', function (socket) {
 						notationList.push(property.zug);
 					});
 					return notationList;
-				})
+				})*/
 		]).then(function (result) {
 			layoutCnt = result[0];
-			notationList = result[1];
 
 			if (layoutCnt === prevLayoutCount)
 				return;
@@ -162,7 +161,7 @@ io.on('connection', function (socket) {
 						});
 
 						return {
-							notation: `${i}: ${notationList[i]}`,
+							notation: `${i}: ${i === 0 ? "initial" : i % 2 === 0 ? "black" : "white"}`,
 							state: state,
 							field: field
 						};
