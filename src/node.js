@@ -1,6 +1,7 @@
 //config
 const serverUrl = "http://www.game-engineering.de:8080/rest/schach/spiel";
-// const serverUrl = "http://games.informatik.hs-mannheim.de:8080/rest/schach/spiel";
+//const serverUrl = "http://games.informatik.hs-mannheim.de:8080/rest/schach/spiel";
+//const serverUrl = "http://localhost:3030/rest/schach/spiel";
 
 //Imports
 const http = require('http').createServer(handlehttp);
